@@ -1,5 +1,7 @@
 var boardSize = 3;
 const board = document.getElementsByClassName('board')[0];
+// board.style.setProperty('---size', boardSize);
+
 function createBoard() {
     for (let i = 0; i < boardSize; i++) {
         for (let j = 0; j < boardSize; j++) {
@@ -10,7 +12,7 @@ function createBoard() {
             board.appendChild(cell);
             cell.textContent = (i * boardSize) + j + 1;
             if (cell.textContent == boardSize * boardSize) {
-                cell.textContent = ' ';
+                cell.textContent = '';
             }
             //shuffleNumbers();
         }
@@ -23,24 +25,46 @@ function deleteBoard() {
     // }
 
     const cells = document.getElementsByClassName('cell');
-    cells.forEach(cell => {
-        cell.remove();
-    });
+    for (const cell in cells) {
+        if (cells.hasOwnProperty(cell)) {
+            cells[cell].remove();
+        }
+    }
 }
 
-createBoard();
-shuffleNumbers();
 
 function addFunctionality() {
 
     const cells = document.getElementsByClassName('cell');
     for (const cell of cells) {
         cell.addEventListener('click', () => {
-            // Handle cell click
+            if(cell.textContent == '') {
+                return;
+            }
+            const emptyCell = document.querySelector('.cell:empty'); //for text content null
+            const emptyRow = parseInt(emptyCell.dataset.row);
+            const emptyCol = parseInt(emptyCell.dataset.col);
+            const cellRow = parseInt(cell.dataset.row);
+            const cellCol = parseInt(cell.dataset.col);
+
+
+            if (validMove(emptyRow, emptyCol, cellRow, cellCol)) {
+                swap(emptyRow, emptyCol, cellRow, cellCol);
+            }
         });
     }
 }
 
+function validMove(emptyRow, emptyCol, cellRow, cellCol) {
+    const rowDiff = Math.abs(emptyRow - cellRow);
+    const colDiff = Math.abs(emptyCol - cellCol);
+    if ((rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1)) {
+        console.log(`Valid move`);
+        return true;
+    }
+    console.log(`Invalid move`);
+    return false;
+}
 const options = document.getElementsByClassName('options')[0];
 
 const size = document.createElement('select');
@@ -87,7 +111,7 @@ resetButton.addEventListener('click', shuffleNumbers);
 //     // for (const cell of cells) {
 //     //     cell.textContent = cell.dataset.row * boardSize + parseInt(cell.dataset.col) + 1;
 //     //     if (cell.textContent == boardSize * boardSize) {
-//     //         cell.textContent = ' ';
+//     //         cell.textContent = '';
 //     //     }
 //         shuffleNumbers();
 //     // }
@@ -98,7 +122,7 @@ function shuffleNumbers() {
     const cells = document.getElementsByClassName('cell');
     for (let _ = 0; _ < 10; _++) {
         for (const cell of cells) {
-            if (cell.textContent == ' ') {
+            if (cell.textContent == '') {
                 moveByRandom(cell);
             }
         }
@@ -106,20 +130,20 @@ function shuffleNumbers() {
 }
 
 function moveByRandom(emptyCell) {
+
     var emptyRow = parseInt(emptyCell.dataset.row);
     var emptyCol = parseInt(emptyCell.dataset.col);
     const directions = [{ row: -1, col: 0 }, { row: 1, col: 0 }, { row: 0, col: -1 }, { row: 0, col: 1 }];
 
-    let cnt=boardSize * boardSize*5 ;
+    let cnt = boardSize * boardSize * 5;
 
-    while (cnt) 
-        {
+    while (cnt) {
         const randomDirection = directions[Math.floor(Math.random() * directions.length)];
         const newRow = emptyRow + randomDirection.row;
         const newCol = emptyCol + randomDirection.col;
-        if(newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize) {
+        if (newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize) {
             swap(emptyRow, emptyCol, newRow, newCol);
-            emptyRow= newRow;
+            emptyRow = newRow;
             emptyCol = newCol;
             cnt--;
         }
@@ -130,7 +154,12 @@ function swap(row1, col1, row2, col2) {
     const cell1 = document.querySelector(`.cell[data-row='${row1}'][data-col='${col1}']`);
     const cell2 = document.querySelector(`.cell[data-row='${row2}'][data-col='${col2}']`);
     const temp = cell1.textContent;
-    console.log(`Swapping ${cell1.textContent} and ${cell2.textContent}`);
+    //console.log(`Swapping ${cell1.textContent} and ${cell2.textContent}`);
     cell1.textContent = cell2.textContent;
     cell2.textContent = temp;
 }
+
+//start the game
+createBoard();
+shuffleNumbers();
+addFunctionality();
