@@ -8,10 +8,10 @@
 }
 
 .cell {
-    border-radius: 10px;
-    background-color: #0fc98e;
-    border-width: 2px;
-    border-color: #0ea65f;
+    border-radius: 0px;
+    /* background-color: #0fc98e; */
+    border-width: 0.5px;
+    border-color: #a7a9a8;
     color: whitesmoke;
     font-size: 16px;
     font-weight: bold;
@@ -23,7 +23,7 @@
     display: grid;
     grid-template-columns: repeat(3, 100px);
     grid-template-rows: repeat(3, 100px);
-    gap: 5px;
+    gap: 0px;
     justify-content: center;
 }
 
@@ -32,21 +32,11 @@
     justify-content: center;
 }
 
-.size{
-    background-color: #0fc98e;
+.size, .mode, .reset-button {
+    background-color: #29c287;
     margin: 5px;
     color: whitesmoke;
-    font-size: 16px;
-    border: 2px solid #0ea65f;
-    border-radius: 10px;
-    padding: 10px 20px;
-    cursor: pointer;
-}
-
-.reset-button {
-    background-color: #0fc98e;
-    margin: 5px;
-    color: whitesmoke;
+    font-family: cursive;
     font-size: 16px;
     border: 2px solid #0ea65f;
     border-radius: 10px;

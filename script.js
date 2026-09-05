@@ -37,21 +37,25 @@ function addFunctionality() {
 
     const cells = document.getElementsByClassName('cell');
     for (const cell of cells) {
-        cell.addEventListener('click', () => {
-            if(cell.textContent == '') {
-                return;
-            }
-            const emptyCell = document.querySelector('.cell:empty'); //for text content null
-            const emptyRow = parseInt(emptyCell.dataset.row);
-            const emptyCol = parseInt(emptyCell.dataset.col);
-            const cellRow = parseInt(cell.dataset.row);
-            const cellCol = parseInt(cell.dataset.col);
+        
+        if (document.getElementsByClassName('mode')[0].value == 'casual') {
+            cell.addEventListener('click', () => {
+                if (cell.textContent == '') {
+                    return;
+                }
+                const emptyCell = document.querySelector('.cell:empty'); //for text content null
+                const emptyRow = parseInt(emptyCell.dataset.row);
+                const emptyCol = parseInt(emptyCell.dataset.col);
+                const cellRow = parseInt(cell.dataset.row);
+                const cellCol = parseInt(cell.dataset.col);
 
 
-            if (validMove(emptyRow, emptyCol, cellRow, cellCol)) {
-                swap(emptyRow, emptyCol, cellRow, cellCol);
-            }
-        });
+                if (validMove(emptyRow, emptyCol, cellRow, cellCol)) {
+                    swap(emptyRow, emptyCol, cellRow, cellCol);
+                }
+                updateColors();
+            });
+        }
     }
 }
 
@@ -66,6 +70,23 @@ function validMove(emptyRow, emptyCol, cellRow, cellCol) {
     return false;
 }
 const options = document.getElementsByClassName('options')[0];
+
+const mode = document.createElement('select');
+mode.classList.add('mode');
+options.appendChild(mode);
+mode.addEventListener('change', () => {
+    addFunctionality();
+});
+
+const casual = document.createElement('option');
+casual.value = 'casual';
+casual.textContent = 'Casual';
+mode.appendChild(casual);
+
+const competitive = document.createElement('option');
+competitive.value = 'competitive';
+competitive.textContent = 'Competitive';
+mode.appendChild(competitive);
 
 const size = document.createElement('select');
 size.classList.add('size');
@@ -106,16 +127,6 @@ const resetButton = document.createElement('button');
 resetButton.classList.add('reset-button');
 resetButton.textContent = 'Reset Board';
 resetButton.addEventListener('click', shuffleNumbers);
-// resetButton.addEventListener('click', () => {
-//     // const cells = document.getElementsByClassName('cell');
-//     // for (const cell of cells) {
-//     //     cell.textContent = cell.dataset.row * boardSize + parseInt(cell.dataset.col) + 1;
-//     //     if (cell.textContent == boardSize * boardSize) {
-//     //         cell.textContent = '';
-//     //     }
-//         shuffleNumbers();
-//     // }
-// })
 options.appendChild(resetButton);
 
 function shuffleNumbers() {
@@ -125,6 +136,21 @@ function shuffleNumbers() {
             if (cell.textContent == '') {
                 moveByRandom(cell);
             }
+        }
+    }
+    updateColors();
+}
+
+function updateColors() {
+    const cells = document.getElementsByClassName('cell');
+    for (const cell of cells) {
+        const value = parseInt(cell.textContent);
+        if (value) {
+            const hue = (value / (boardSize * boardSize)) * 360;
+            cell.style.backgroundColor = `hsl(${hue}, 70%, 50%)`;
+        }
+        else {
+            cell.style.backgroundColor = 'white';
         }
     }
 }
@@ -157,9 +183,11 @@ function swap(row1, col1, row2, col2) {
     //console.log(`Swapping ${cell1.textContent} and ${cell2.textContent}`);
     cell1.textContent = cell2.textContent;
     cell2.textContent = temp;
+    updateColors();
 }
 
 //start the game
 createBoard();
 shuffleNumbers();
+// updateColors()
 addFunctionality();
